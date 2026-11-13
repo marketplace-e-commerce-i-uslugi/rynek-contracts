@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rynek.pl/contracts/events/order.shipped.schema.json",
+  "title": "order.shipped",
+  "description": "Zamówienie w drodze (przewoźnik odebrał przesyłkę). Zastępuje POST /internal/orders/{id}/shipment-status (PICKED_UP). Producent: order-service. Temat Kafka: order.shipped, klucz wiadomości: aggregateId.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "aggregateId",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unikalny; konsument deduplikuje po nim (dostarczanie at-least-once)."
+    },
+    "eventType": {
+      "const": "order.shipped"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "aggregateId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Id agregatu (zamówienie, rezerwacja, płatność, kanał, opinia); klucz partycji."
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "orderId",
+        "shipmentId"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "shipmentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "carrier": {
+          "type": "string"
+        },
+        "trackingNumber": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

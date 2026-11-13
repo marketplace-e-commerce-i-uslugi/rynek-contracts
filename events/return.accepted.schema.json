@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rynek.pl/contracts/events/return.accepted.schema.json",
+  "title": "return.accepted",
+  "description": "Sprzedawca przyjął zwrot. Powinien uruchomić zwrot pieniędzy w payment-service. Producent: order-service. Temat Kafka: return.accepted, klucz wiadomości: aggregateId.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "aggregateId",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unikalny; konsument deduplikuje po nim (dostarczanie at-least-once)."
+    },
+    "eventType": {
+      "const": "return.accepted"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "aggregateId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Id agregatu (zamówienie, rezerwacja, płatność, kanał, opinia); klucz partycji."
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "orderId",
+        "returnId",
+        "paymentId",
+        "refundAmount"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "returnId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sellerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "buyerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "paymentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "refundAmount": {
+          "type": "object",
+          "required": [
+            "amount",
+            "currency"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "description": "grosze"
+            },
+            "currency": {
+              "type": "string",
+              "const": "PLN"
+            }
+          }
+        }
+      }
+    }
+  }
+}

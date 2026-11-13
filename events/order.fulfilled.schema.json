@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rynek.pl/contracts/events/order.fulfilled.schema.json",
+  "title": "order.fulfilled",
+  "description": "Zamówienie zrealizowane (przesyłka doręczona). Zastępuje POST /internal/orders/{id}/shipment-status (DELIVERED); od niego liczą się okno zwrotu 14 dni, opinie i saldo sprzedawcy. Producent: order-service. Temat Kafka: order.fulfilled, klucz wiadomości: aggregateId.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "aggregateId",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unikalny; konsument deduplikuje po nim (dostarczanie at-least-once)."
+    },
+    "eventType": {
+      "const": "order.fulfilled"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "aggregateId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Id agregatu (zamówienie, rezerwacja, płatność, kanał, opinia); klucz partycji."
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "orderId",
+        "fulfilledAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "buyerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sellerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "shipmentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "fulfilledAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "total": {
+          "type": "object",
+          "required": [
+            "amount",
+            "currency"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "description": "grosze"
+            },
+            "currency": {
+              "type": "string",
+              "const": "PLN"
+            }
+          }
+        }
+      }
+    }
+  }
+}

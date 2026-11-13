@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rynek.pl/contracts/events/booking.cancelled.schema.json",
+  "title": "booking.cancelled",
+  "description": "Rezerwacja anulowana (klient, usługodawca albo wygasła). Zastępuje POST /internal/bookings/{id}/cancelled (booking -> payment, zwrot zaliczki). Producent: booking-service. Temat Kafka: booking.cancelled, klucz wiadomości: aggregateId.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "aggregateId",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unikalny; konsument deduplikuje po nim (dostarczanie at-least-once)."
+    },
+    "eventType": {
+      "const": "booking.cancelled"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "aggregateId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Id agregatu (zamówienie, rezerwacja, płatność, kanał, opinia); klucz partycji."
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "bookingId",
+        "cancelledBy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "bookingId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "customerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "providerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "cancelledBy": {
+          "enum": [
+            "CUSTOMER",
+            "PROVIDER",
+            "EXPIRED"
+          ]
+        },
+        "depositPaymentId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "depositRefundable": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

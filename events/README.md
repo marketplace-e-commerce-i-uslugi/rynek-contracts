@@ -1,6 +1,6 @@
 # Zdarzenia Kafka
 
-Konwencja nazw: `domena.zdarzenie` (np. `offer.published`). Schemat każdego zdarzenia trafi tu jako osobny plik (JSON Schema lub Avro, do decyzji).
+Konwencja nazw: `domena.zdarzenie` (np. `offer.published`). Schemat każdego zdarzenia to osobny plik JSON Schema (2020-12): `<nazwa>.schema.json`.
 
 ## Mapa zdarzeń (§17 dokumentu architektury)
 
@@ -18,3 +18,11 @@ Konwencja nazw: `domena.zdarzenie` (np. `offer.published`). Schemat każdego zda
 | `payment.succeeded`, `payment.failed`, `payment.refunded` | payment | order, booking, notification |
 | `booking.created`, `booking.confirmed`, `booking.cancelled`, `booking.completed` | booking | notification, analytics, engagement |
 | `shipment.status-changed` | shipping | order, notification |
+
+## Koperta i dostępne schematy
+
+Wspólne pola: `eventId`, `eventType`, `occurredAt`, `aggregateId`, `payload`. Klucz wiadomości Kafki to `aggregateId`.
+
+Schematy (zdarzenia zastępujące wywołania `/internal`): `order.cancelled`, `order.shipped`, `order.fulfilled`, `return.accepted`, `channel.created`, `review.created`, `booking.cancelled`, `payment.paid`. Mapowanie z wywołań HTTP, producenci i konsumenci: `../docs/migracja-z-wywolan-synchronicznych.md`.
+
+Pozostałe zdarzenia z mapy nie mają jeszcze schematów.

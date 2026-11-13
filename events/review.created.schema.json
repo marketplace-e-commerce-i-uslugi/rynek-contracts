@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rynek.pl/contracts/events/review.created.schema.json",
+  "title": "review.created",
+  "description": "Zapisana opinia o zamówieniu lub usłudze. Zastępuje PUT /internal/orders|bookings/{id}/reviewed. Producent: engagement-service. Temat Kafka: review.created, klucz wiadomości: aggregateId.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "aggregateId",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unikalny; konsument deduplikuje po nim (dostarczanie at-least-once)."
+    },
+    "eventType": {
+      "const": "review.created"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "aggregateId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Id agregatu (zamówienie, rezerwacja, płatność, kanał, opinia); klucz partycji."
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "reviewId",
+        "targetType",
+        "targetId",
+        "channelId",
+        "rating"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reviewId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "targetType": {
+          "enum": [
+            "ORDER",
+            "BOOKING"
+          ]
+        },
+        "targetId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "offerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "channelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "authorId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "rating": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        }
+      }
+    }
+  }
+}

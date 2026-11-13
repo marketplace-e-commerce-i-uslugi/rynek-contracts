@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rynek.pl/contracts/events/order.cancelled.schema.json",
+  "title": "order.cancelled",
+  "description": "Zamówienie anulowane (przed wysyłką, także opłacone) albo wygasłe. Zastępuje POST /internal/orders/{id}/cancelled (order -> payment). Producent: order-service. Temat Kafka: order.cancelled, klucz wiadomości: aggregateId.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "aggregateId",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unikalny; konsument deduplikuje po nim (dostarczanie at-least-once)."
+    },
+    "eventType": {
+      "const": "order.cancelled"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "aggregateId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Id agregatu (zamówienie, rezerwacja, płatność, kanał, opinia); klucz partycji."
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "orderId",
+        "reason",
+        "wasPaid"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "buyerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sellerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "reason": {
+          "enum": [
+            "BUYER",
+            "SELLER",
+            "EXPIRED"
+          ]
+        },
+        "wasPaid": {
+          "type": "boolean"
+        },
+        "paymentId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

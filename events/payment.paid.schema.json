@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rynek.pl/contracts/events/payment.paid.schema.json",
+  "title": "payment.paid",
+  "description": "Płatność za zamówienie albo zaliczka za rezerwację opłacona. Zastępuje POST /internal/orders|bookings/{id}/mark-paid. W §17 odpowiada mu payment.succeeded; do ujednolicenia przy wdrożeniu. Producent: payment-service. Temat Kafka: payment.paid, klucz wiadomości: aggregateId.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "aggregateId",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unikalny; konsument deduplikuje po nim (dostarczanie at-least-once)."
+    },
+    "eventType": {
+      "const": "payment.paid"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "aggregateId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Id agregatu (zamówienie, rezerwacja, płatność, kanał, opinia); klucz partycji."
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "paymentId",
+        "purpose",
+        "amount"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "purpose": {
+          "enum": [
+            "ORDER",
+            "BOOKING_DEPOSIT"
+          ]
+        },
+        "orderId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bookingId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "type": "object",
+          "required": [
+            "amount",
+            "currency"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "description": "grosze"
+            },
+            "currency": {
+              "type": "string",
+              "const": "PLN"
+            }
+          }
+        },
+        "method": {
+          "enum": [
+            "BLIK",
+            "CARD",
+            "TRANSFER"
+          ]
+        }
+      }
+    }
+  }
+}

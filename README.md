@@ -7,7 +7,8 @@ Wspólne kontrakty platformy **Rynek**: źródło prawdy dla interfejsów międz
 ## Struktura
 
 - `openapi/`: jedna specyfikacja OpenAPI 3 na serwis, np. `openapi/catalog-service.yaml`. Opisuje endpointy publiczne i `/internal/...`.
-- `events/`: schematy zdarzeń Kafka. `events/README.md` zawiera mapę „kto publikuje, kto słucha”.
+- `docs/`: dokumenty o kontraktach, np. `migracja-z-wywolan-synchronicznych.md`.
+- `events/`: schematy zdarzeń Kafka (JSON Schema). `events/README.md` zawiera mapę „kto publikuje, kto słucha”.
 
 ## Zasady
 
